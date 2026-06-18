@@ -5,7 +5,7 @@ import TrameViz from './TrameViz'
 const Main = (props) => {
   return (
     <Row className="justify-content-center">
-      <Col xs="12" sm="12" md="11">
+      <Col xs="12" sm="12" md="12">
         <TrameViz />
       </Col>
     </Row>

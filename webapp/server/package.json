@@ -4,6 +4,7 @@
   "description": "edge webapp",
   "main": "server.js",
   "scripts": {
+    "start": "node epicServer.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "jest --detectOpenHandles --forceExit --watchAll=false --verbose --silent=false --runInBand ./tests --env node"
@@ -26,6 +27,7 @@
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
     "helmet": "^7.0.0",
+    "json-to-pretty-yaml": "^1.2.2",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
     "mongodb-memory-server": "^9.0.1",

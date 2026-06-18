@@ -1,11 +1,12 @@
 const fs = require('fs')
 const xlsx = require('node-xlsx').default
+const YAML = require('json-to-pretty-yaml')
 const { execCmd } = require('../utils/common')
 const config = require('../config')
 const workflowConfig = require('./config')
 
 const cromwellWorkflows = []
-const nextflowWorkflows = ['sra2fastq']
+const nextflowWorkflows = ['sra2fastq', 'fdgenome']
 const nextflowConfigs = {
   profiles: `${config.NEXTFLOW.WORKFLOW_DIR}/common/profiles.nf`,
   nf_reports: `${config.NEXTFLOW.WORKFLOW_DIR}/common/nf_reports.tmpl`,
@@ -19,12 +20,15 @@ const workflowList = {
       : `${config.NEXTFLOW.WORKFLOW_DIR}/sra2fastq/nextflow/main.nf -profile local`,
     config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/sra2fastq/workflow_config.tmpl`,
   },
-  runFaQCs: {
-    outdir: 'output/ReadsQC',
-    nextflow_main: `${config.NEXTFLOW.WORKFLOW_DIR}/metagenomics/nextflow/main.nf`,
-    config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/metagenomics/templates/workflow_config.tmpl`,
-    zip_output: '<PROJECT>_readsQC.tar.gz',
-    zip_output_cmd: 'cd <PROJECT_HOME>/output && tar -czf <ZIP_OUTPUT> ReadsQC',
+  fdgenome: {
+    outdir: 'output/epic',
+    indir: 'input',
+    nextflow_main: process.env.NEXTFLOW_MAIN
+      ? `${process.env.NEXTFLOW_MAIN} -profile ${config.NEXTFLOW.PROFILE ? config.NEXTFLOW.PROFILE : 'standard'}`
+      : `${config.NEXTFLOW.WORKFLOW_DIR}/epicedge_main.nf -profile standard`,
+    config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/epic/fdgenome.tmpl`,
+    conda_env: '/panfs/biopan04/4DGENOMESEQ/HIC2STRUCTURE/envs/epicedge',
+    executor_config: `${config.NEXTFLOW.WORKFLOW_DIR}/epic/fdgenome_executor.conf`,
   },
 }
 
@@ -34,6 +38,57 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
   if (projectConf.workflow.name === 'sra2fastq') {
     // download sra data to shared directory
     params.sraOutdir = config.IO.SRA_BASE_DIR
+  }
+  if (projectConf.workflow.name === 'fdgenome') {
+    // generate input.yaml
+    const json = {
+      ensemble: {
+        verion: '1.0',
+        meta: { title: proj.name, desc: proj.desc },
+        license: 'somename.txt',
+        reference: {
+          sequence: fs.realpathSync(
+            projectConf.workflow.input.reference.sequence,
+          ),
+          annotation: fs.existsSync(
+            projectConf.workflow.input.reference.annotation,
+          )
+            ? fs.realpathSync(projectConf.workflow.input.reference.annotation)
+            : null,
+          mitochondria: projectConf.workflow.input.reference.mitochondria,
+          resolution: projectConf.workflow.input.reference.resolution || 10000,
+          contigs: fs.realpathSync(
+            projectConf.workflow.input.reference.genomelist,
+          ),
+        },
+        experiments: [],
+      },
+    }
+
+    projectConf.workflow.input.experiments.forEach(exp => {
+      const e = {
+        name: exp.name,
+        sample: exp.sample,
+        replicate: exp.replicate,
+        desc: exp.desc,
+        timesteps: [],
+      }
+      exp.timesteps.forEach(ts => {
+        e.timesteps.push({
+          name: ts.name,
+          structure: fs.realpathSync(ts.structure),
+          struct_stage: ts.struct_stage,
+        })
+      })
+      json.ensemble.experiments.push(e)
+    })
+    fs.writeFileSync(`${projHome}/workflow_input.yaml`, YAML.stringify(json))
+    params.inputYaml = `${projHome}/workflow_input.yaml`
+    // use the executor config file for the fdgenome workflow
+    params.condaEnv = process.env.CONDA_ENV
+      ? process.env.CONDA_ENV
+      : `${config.NEXTFLOW.WORKFLOW_DIR}/../envs/epic`
+    params.executorConfig = `${config.NEXTFLOW.WORKFLOW_DIR}/epic/fdgenome_executor.conf`
   }
 
   return params

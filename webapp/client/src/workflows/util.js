@@ -6,8 +6,8 @@ export const apis = {
   userStructures: '/api/auth-user/structures',
   userStructuresAll: '/api/auth-user/structures/all',
   adminStructures: '/api/admin/structures',
-  publicTrame: '/api/public/trame',
-  userTrame: '/api/auth-user/trame',
+  publicTrame: '/api/workflow/public/trame',
+  userTrame: '/api/workflow/auth-user/trame',
 }
 
 export const structureUrl = config.APP.API_URI + '/structures'
