@@ -11,13 +11,17 @@ const _nav = [
     to: '/home',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
   },
-  {
-    component: CNavItem,
-    name: 'Public Projects',
-    to: '/public/projects',
-    icon: <CIcon icon={cilGrid} customClassName="nav-icon" />,
-    disabled: config.APP.SINGLE_USER_MODE_IS_ENABLED,
-  },
+
+  ...(config.APP.SINGLE_USER_MODE_IS_ENABLED
+    ? []
+    : [
+        {
+          component: CNavItem,
+          name: 'Public Projects',
+          to: '/public/projects',
+          icon: <CIcon icon={cilGrid} customClassName="nav-icon" />,
+        },
+      ]),
   {
     component: CNavItem,
     name: 'Upload Files',
