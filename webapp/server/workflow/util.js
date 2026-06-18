@@ -24,8 +24,8 @@ const workflowList = {
     outdir: 'output/epic',
     indir: 'input',
     nextflow_main: process.env.NEXTFLOW_MAIN
-      ? `${process.env.NEXTFLOW_MAIN} -profile ${config.NEXTFLOW.PROFILE ? config.NEXTFLOW.PROFILE : 'standard'}`
-      : `${config.NEXTFLOW.WORKFLOW_DIR}/epicedge_main.nf -profile standard`,
+      ? `${process.env.NEXTFLOW_MAIN} -profile ${process.env.NEXTFLOW_PROFILE ? process.env.NEXTFLOW_PROFILE : 'standard'}`
+      : `${config.NEXTFLOW.WORKFLOW_DIR}/epicedge_main.nf -profile ${process.env.NEXTFLOW_PROFILE ? process.env.NEXTFLOW_PROFILE : 'standard'}`,
     config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/epic/fdgenome.tmpl`,
     conda_env: '/panfs/biopan04/4DGENOMESEQ/HIC2STRUCTURE/envs/epicedge',
     executor_config: `${config.NEXTFLOW.WORKFLOW_DIR}/epic/fdgenome_executor.conf`,
