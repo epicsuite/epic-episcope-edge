@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const TrameViz = (props) => {
   const location = useLocation()
+  const navigate = useNavigate()
   const params = new URLSearchParams(location.search)
   const [url, setUrl] = useState()
   const [project, setProject] = useState()
@@ -19,7 +20,7 @@ const TrameViz = (props) => {
       {project && (
         <>
           <a
-            href={`/user/project?code=${project.code}`}
+            onClick={() => navigate(`/user/project?code=${project.code}`)}
             rel="noopener noreferrer"
             className="edge-link"
           >
