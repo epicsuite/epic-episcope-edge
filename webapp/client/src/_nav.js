@@ -2,6 +2,7 @@ import React from 'react'
 import CIcon from '@coreui/icons-react'
 import { cilSpeedometer, cilGrid, cilCloudUpload, cilLayers, cilCursor } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import config from 'src/config'
 
 const _nav = [
   {
@@ -15,6 +16,7 @@ const _nav = [
     name: 'Public Projects',
     to: '/public/projects',
     icon: <CIcon icon={cilGrid} customClassName="nav-icon" />,
+    disabled: config.APP.SINGLE_USER_MODE_IS_ENABLED,
   },
   {
     component: CNavItem,
