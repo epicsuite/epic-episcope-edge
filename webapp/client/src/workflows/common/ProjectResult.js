@@ -177,7 +177,7 @@ const ProjectResult = (props) => {
     submitTrameSession(params, type === 'public' ? 'public' : 'user')
       .then((data) => {
         setEpiscopeLoading(false)
-        navigate('/trame', { state: { url: data.url, project: project } })
+        navigate('/trame', { state: { url: data.url, project: project, type: type } })
       })
       .catch((error) => {
         setEpiscopeLoading(false)

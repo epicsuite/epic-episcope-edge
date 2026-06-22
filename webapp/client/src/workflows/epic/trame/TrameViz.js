@@ -7,10 +7,13 @@ const TrameViz = (props) => {
   const params = new URLSearchParams(location.search)
   const [url, setUrl] = useState()
   const [project, setProject] = useState()
+  const [type, setType] = useState()
+
   useEffect(() => {
     if (location.state) {
       setUrl(location.state.url)
       setProject(location.state.project)
+      setType(location.state.type)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -20,7 +23,7 @@ const TrameViz = (props) => {
       {project && (
         <>
           <a
-            onClick={() => navigate(`/user/project?code=${project.code}`)}
+            onClick={() => navigate(`/${type}/project?code=${project.code}`)}
             rel="noopener noreferrer"
             className="edge-link"
           >
