@@ -13,7 +13,7 @@ const sysError = config.APP.API_ERROR
 const trameCmds = {
   episcope:
     // eslint-disable-next-line no-multi-str
-    `${workflowConfig.EPIC.PV_BIN_DIR}/pvbatch --force-offscreen-rendering --venv ${workflowConfig.EPIC.EPICSCOPE_ENV} -m episcope.app \
+    `${workflowConfig.EPIC.PV_BIN_DIR}/pvpython --force-offscreen-rendering --venv ${workflowConfig.EPIC.EPICSCOPE_ENV} -m episcope.app \
 --data <%= data %> \
 --port <%= port %> \
 --server &`,
