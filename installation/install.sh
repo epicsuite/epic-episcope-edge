@@ -19,6 +19,7 @@ if [ ! -d  $io_home ]; then
     "db"
     "bulksubmissions"
     "tmp"
+    "execution_reports"
   )
 
   for dir in "${dirs[@]}"
@@ -62,6 +63,7 @@ files=(
   "webapp/server/workflow/indexRouter.js"
   "webapp/server/workflow/util.js"
   # root files
+  "pm2.config.js"
   ".gitignore"
 )
 for file in "${files[@]}"

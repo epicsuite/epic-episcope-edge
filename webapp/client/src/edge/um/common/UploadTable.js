@@ -16,7 +16,7 @@ import {
   Lock,
   LockOpen,
 } from '@mui/icons-material'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 import { updateUploadAdmin } from 'src/redux/reducers/edge/adminSlice'
 import { updateUpload } from 'src/redux/reducers/edge/userSlice'
@@ -200,18 +200,19 @@ const UploadTable = (props) => {
       {
         header: 'Created',
         accessorKey: 'created',
-        Cell: ({ cell }) => <>{moment(cell.getValue()).format('MM/DD/YYYY, h:mm:ss A')}</>,
+        Cell: ({ cell }) => <>{dayjs(cell.getValue()).format('MM/DD/YYYY, h:mm:ss A')}</>,
         enableEditing: false,
         enableColumnFilter: false,
       },
       {
         header: 'Updated',
         accessorKey: 'updated',
-        Cell: ({ cell }) => <>{moment(cell.getValue()).format('MM/DD/YYYY, h:mm:ss A')}</>,
+        Cell: ({ cell }) => <>{dayjs(cell.getValue()).format('MM/DD/YYYY, h:mm:ss A')}</>,
         enableEditing: false,
         enableColumnFilter: false,
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getCommonEditTextFieldProps],
   )
 
@@ -496,70 +497,74 @@ const UploadTable = (props) => {
                       />
                     </Fab>
                   </Tooltip>
-                  <Tooltip title="Share selected uploads" aria-label="share">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="share"
-                    >
-                      <PersonAdd
-                        className="edge-table-icon"
-                        onClick={() => {
-                          setTable(table)
-                          handleAction('share', table.getSelectedRowModel().flatRows)
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Unshare selected uploads" aria-label="unshare">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="unshare"
-                    >
-                      <PersonAddDisabled
-                        className="edge-table-icon"
-                        onClick={() => {
-                          handleAction('unshare', table.getSelectedRowModel().flatRows)
-                          table.reset()
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Publish selected uploads" aria-label="publish">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="publish"
-                    >
-                      <LockOpen
-                        className="edge-table-icon"
-                        onClick={() => {
-                          setTable(table)
-                          handleAction('publish', table.getSelectedRowModel().flatRows)
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
-                  <Tooltip title="Unpublish selected uploads" aria-label="unpublish">
-                    <Fab
-                      color="primary"
-                      size="small"
-                      style={{ marginRight: 10 }}
-                      aria-label="unpublish"
-                    >
-                      <Lock
-                        className="edge-table-icon"
-                        onClick={() => {
-                          setTable(table)
-                          handleAction('unpublish', table.getSelectedRowModel().flatRows)
-                        }}
-                      />
-                    </Fab>
-                  </Tooltip>
+                  {config.APP.UPLOAD_SHARE_IS_ENABLED && (
+                    <>
+                      <Tooltip title="Share selected uploads" aria-label="share">
+                        <Fab
+                          color="primary"
+                          size="small"
+                          style={{ marginRight: 10 }}
+                          aria-label="share"
+                        >
+                          <PersonAdd
+                            className="edge-table-icon"
+                            onClick={() => {
+                              setTable(table)
+                              handleAction('share', table.getSelectedRowModel().flatRows)
+                            }}
+                          />
+                        </Fab>
+                      </Tooltip>
+                      <Tooltip title="Unshare selected uploads" aria-label="unshare">
+                        <Fab
+                          color="primary"
+                          size="small"
+                          style={{ marginRight: 10 }}
+                          aria-label="unshare"
+                        >
+                          <PersonAddDisabled
+                            className="edge-table-icon"
+                            onClick={() => {
+                              handleAction('unshare', table.getSelectedRowModel().flatRows)
+                              table.reset()
+                            }}
+                          />
+                        </Fab>
+                      </Tooltip>
+                      <Tooltip title="Publish selected uploads" aria-label="publish">
+                        <Fab
+                          color="primary"
+                          size="small"
+                          style={{ marginRight: 10 }}
+                          aria-label="publish"
+                        >
+                          <LockOpen
+                            className="edge-table-icon"
+                            onClick={() => {
+                              setTable(table)
+                              handleAction('publish', table.getSelectedRowModel().flatRows)
+                            }}
+                          />
+                        </Fab>
+                      </Tooltip>
+                      <Tooltip title="Unpublish selected uploads" aria-label="unpublish">
+                        <Fab
+                          color="primary"
+                          size="small"
+                          style={{ marginRight: 10 }}
+                          aria-label="unpublish"
+                        >
+                          <Lock
+                            className="edge-table-icon"
+                            onClick={() => {
+                              setTable(table)
+                              handleAction('unpublish', table.getSelectedRowModel().flatRows)
+                            }}
+                          />
+                        </Fab>
+                      </Tooltip>
+                    </>
+                  )}
                 </div>
               </div>
             )
