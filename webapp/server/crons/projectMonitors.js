@@ -7,7 +7,7 @@ const logger = require('../utils/logger')
 const { projectStatusSender } = require('../mailers/senders')
 const config = require('../config')
 
-const projectMonitor = async () => {
+const projectStatusMonitor = async () => {
   logger.debug('project status monitor')
   try {
     // notify complete/failed projects
@@ -24,7 +24,7 @@ const projectMonitor = async () => {
                   projectName: proj.name,
                   projectDesc: proj.desc,
                   projectCreated: proj.created,
-                  projectType: proj.label,
+                  projectType: proj.type,
                   projectStatus: proj.status,
                   projectPageURL: `${config.APP.UI_BASE_URL}/user/project?code=${proj.code}`,
                 }
@@ -45,6 +45,30 @@ const projectMonitor = async () => {
     })
   } catch (err) {
     logger.error(`projectStatusMonitor failed:${err}`)
+  }
+}
+
+const projectFailedMonitor = async () => {
+  logger.debug('project failed monitor')
+  try {
+    // mark failed projects after failureGracePeriod
+    const failureGracePeriod = dayjs().subtract(
+      config.CRON.PROJECT_FAILURE_GRACE_PERIOD_DAYS,
+      'days',
+    )
+    const projs = await Project.find({
+      status: 'failed',
+      updated: { $lte: failureGracePeriod },
+    })
+    let i
+    for (i = 0; i < projs.length; i += 1) {
+      const { code } = projs[i]
+      logger.info(`mark project as failed: ${code}`)
+      projs[i].status = 'failed'
+      projs[i].save()
+    }
+  } catch (err) {
+    logger.error(`projectFailedMonitor failed:${err}`)
   }
 }
 
@@ -86,7 +110,7 @@ const projectDeletionMonitor = async () => {
       })
     }
   } catch (err) {
-    logger.error(`projectMonitor failed:${err}`)
+    logger.error(`projectDeletionMonitor failed:${err}`)
   }
 }
 
@@ -148,7 +172,8 @@ const projectRerunMonitor = async () => {
 }
 
 module.exports = {
-  projectMonitor,
+  projectStatusMonitor,
+  projectFailedMonitor,
   projectDeletionMonitor,
   projectRerunMonitor,
 }
